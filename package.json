@@ -7,7 +7,8 @@
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create:migration": "mikro-orm migration:create"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "@mikro-orm/migrations": "^4.0.6",
     "@mikro-orm/postgresql": "^4.0.6",
     "apollo-server-express": "^2.18.0",
+    "argon2": "^0.27.0",
     "config": "^3.3.1",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
