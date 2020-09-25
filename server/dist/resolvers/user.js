@@ -68,7 +68,7 @@ UserResponse = __decorate([
     type_graphql_1.ObjectType()
 ], UserResponse);
 let UserResolver = class UserResolver {
-    register(options, { em }) {
+    register(options, { em, req }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options.username.length <= 2) {
                 return {
@@ -91,15 +91,22 @@ let UserResolver = class UserResolver {
                 };
             }
             const hashedPassword = yield argon2_1.default.hash(options.password);
-            const user = em.create(User_1.User, {
-                username: options.username,
-                password: hashedPassword,
-            });
+            let user;
             try {
-                yield em.persistAndFlush(user);
+                const result = yield em
+                    .createQueryBuilder(User_1.User)
+                    .getKnexQuery()
+                    .insert({
+                    username: options.username,
+                    password: hashedPassword,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                    .returning('*');
+                user = result[0];
             }
             catch (error) {
-                if (error.code === '23505') {
+                if (error.detail.includes('already exists')) {
                     return {
                         errors: [
                             {
@@ -110,6 +117,7 @@ let UserResolver = class UserResolver {
                     };
                 }
             }
+            req.session.userId = user.id;
             return { user };
         });
     }
@@ -120,7 +128,7 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
-                            field: 'login',
+                            field: 'username',
                             message: 'Invalid login',
                         },
                     ],
@@ -131,7 +139,7 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
-                            field: 'login',
+                            field: 'password',
                             message: 'Invalid login',
                         },
                     ],
