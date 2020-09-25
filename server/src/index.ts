@@ -30,7 +30,7 @@ const main = async () => {
   )
   app.use(
     session({
-      name: 'qid',
+      name: config.cookieName,
       store: new RedisStore({
         client: redis,
         disableTouch: true,

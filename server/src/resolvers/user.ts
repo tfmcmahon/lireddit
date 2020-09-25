@@ -8,9 +8,11 @@ import {
   Mutation,
   ObjectType,
   Resolver,
+  Query,
 } from 'type-graphql'
 import argon2 from 'argon2'
 import { EntityManager } from '@mikro-orm/postgresql'
+const config = require('config')
 
 @InputType()
 class UsernamePasswordInput {
@@ -39,8 +41,19 @@ class UserResponse {
   user?: User
 }
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req, em }: MyContext) {
+    // you are not logged in
+    if (!req.session.userId) {
+      return null
+    }
+
+    const user = await em.findOne(User, { id: req.session.userId })
+    return user
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg('options') options: UsernamePasswordInput,
@@ -135,5 +148,21 @@ export class UserResolver {
     req.session.userId = user.id
 
     return { user }
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie(config.cookieName)
+        if (err) {
+          console.log(err)
+          resolve(false)
+          return
+        }
+
+        resolve(true)
+      })
+    )
   }
 }
