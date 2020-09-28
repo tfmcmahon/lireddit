@@ -26,11 +26,11 @@ exports.validateRegister = (options) => {
             },
         ];
     }
-    if (options.password.length <= 3) {
+    if (options.password.length <= 2) {
         return [
             {
                 field: 'password',
-                message: 'Length bust be greater than 3',
+                message: 'Length bust be greater than 2',
             },
         ];
     }
