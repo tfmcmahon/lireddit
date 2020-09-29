@@ -39,7 +39,7 @@ PostInput = __decorate([
     type_graphql_1.InputType()
 ], PostInput);
 let PostResolver = class PostResolver {
-    posts() {
+    posts(limit) {
         return __awaiter(this, void 0, void 0, function* () {
             return Post_1.Post.find();
         });
@@ -73,8 +73,9 @@ let PostResolver = class PostResolver {
 };
 __decorate([
     type_graphql_1.Query(() => [Post_1.Post]),
+    __param(0, type_graphql_1.Arg('lmit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "posts", null);
 __decorate([
