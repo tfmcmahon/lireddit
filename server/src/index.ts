@@ -12,8 +12,10 @@ import cors from 'cors'
 import { createConnection } from 'typeorm'
 import { User } from './entities/User'
 import { Post } from './entities/Post'
+import path from 'path'
 const config = require('config')
 
+//reruna
 const main = async () => {
   const connection = await createConnection({
     type: 'postgres',
@@ -22,8 +24,12 @@ const main = async () => {
     password: config.postgreSQLP,
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, './migrations/*')],
     entities: [Post, User],
   })
+
+  await connection.runMigrations()
+  //await Post.delete({})
 
   const app = express()
 
