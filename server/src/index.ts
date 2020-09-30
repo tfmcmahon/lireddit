@@ -13,6 +13,7 @@ import { createConnection } from 'typeorm'
 import { User } from './entities/User'
 import { Post } from './entities/Post'
 import path from 'path'
+import { Upvote } from './entities/Upvote'
 const config = require('config')
 
 //reruna
@@ -25,7 +26,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [Post, User],
+    entities: [Post, User, Upvote],
   })
 
   await connection.runMigrations()

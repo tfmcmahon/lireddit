@@ -27,6 +27,7 @@ const typeorm_1 = require("typeorm");
 const User_1 = require("./entities/User");
 const Post_1 = require("./entities/Post");
 const path_1 = __importDefault(require("path"));
+const Upvote_1 = require("./entities/Upvote");
 const config = require('config');
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const connection = yield typeorm_1.createConnection({
@@ -37,7 +38,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         logging: true,
         synchronize: true,
         migrations: [path_1.default.join(__dirname, './migrations/*')],
-        entities: [Post_1.Post, User_1.User],
+        entities: [Post_1.Post, User_1.User, Upvote_1.Upvote],
     });
     yield connection.runMigrations();
     const app = express_1.default();

@@ -8,6 +8,8 @@ import {
   ObjectType,
   Resolver,
   Query,
+  FieldResolver,
+  Root,
 } from 'type-graphql'
 import argon2 from 'argon2'
 import { UsernamePasswordInput } from './UsernamePasswordInput'
@@ -37,6 +39,15 @@ class UserResponse {
 
 @Resolver(User)
 export class UserResolver {
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: MyContext) {
+    if (req.session.userId === user.id) {
+      return user.email
+    }
+
+    return ''
+  }
+
   @Mutation(() => UserResponse)
   async changePassword(
     @Arg('token') token: string,
