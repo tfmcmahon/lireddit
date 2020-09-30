@@ -2,9 +2,20 @@ import { withUrqlClient } from 'next-urql'
 import { Layout } from '../components/Layout'
 import { usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
-import { Link, Stack, Box, Heading, Text, Flex, Button } from '@chakra-ui/core'
+import {
+  Link,
+  Stack,
+  Box,
+  Heading,
+  Text,
+  Flex,
+  Button,
+  Icon,
+  IconButton,
+} from '@chakra-ui/core'
 import NextLink from 'next/link'
 import { useState } from 'react'
+import { UpvoteSection } from '../components/UpvoteSection'
 
 const Index = () => {
   const [variables, setVariables] = useState({
@@ -33,11 +44,14 @@ const Index = () => {
       ) : (
         <Stack spacing={8}>
           {data!.posts.posts.map((post) => (
-            <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
-              <Heading fontSize='xl'>{post.title}</Heading>{' '}
-              <Text>posted by {post.creator.username}</Text>
-              <Text mt={4}>{post.textSnippet}</Text>
-            </Box>
+            <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
+              <UpvoteSection post={post} />
+              <Box>
+                <Heading fontSize='xl'>{post.title}</Heading>
+                <Text>posted by {post.creator.username}</Text>
+                <Text mt={4}>{post.textSnippet}</Text>
+              </Box>
+            </Flex>
           ))}
         </Stack>
       )}
