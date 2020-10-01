@@ -1,6 +1,6 @@
 import { withUrqlClient } from 'next-urql'
 import { Layout } from '../components/Layout'
-import { usePostsQuery } from '../generated/graphql'
+import { useDeletePostMutation, usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import {
   Link,
@@ -22,9 +22,10 @@ const Index = () => {
     limit: 15,
     cursor: null as string | null,
   })
-  const [{ data, fetching, ...other }] = usePostsQuery({
+  const [{ data, fetching }] = usePostsQuery({
     variables,
   })
+  const [, deletePost] = useDeletePostMutation()
 
   if (!fetching && !data) {
     return <div>There's nothing here</div>
@@ -32,31 +33,39 @@ const Index = () => {
 
   return (
     <Layout>
-      <Flex align='center'>
-        <Heading>LiReddit</Heading>
-        <NextLink href='/create-post'>
-          <Link ml='auto'>Create post</Link>
-        </NextLink>
-      </Flex>
-      <br />
       {fetching && !data ? (
         <div>...loading</div>
       ) : (
         <Stack spacing={8}>
-          {data!.posts.posts.map((post) => (
-            <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
-              <UpvoteSection post={post} />
-              <Box>
-                <NextLink href='/post/[id]' as={`/post/${post.id}`}>
-                  <Link>
-                    <Heading fontSize='xl'>{post.title}</Heading>
-                  </Link>
-                </NextLink>
-                <Text>posted by {post.creator.username}</Text>
-                <Text mt={4}>{post.textSnippet}</Text>
-              </Box>
-            </Flex>
-          ))}
+          {data!.posts.posts.map((post) =>
+            !post ? null : (
+              <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
+                <UpvoteSection post={post} />
+                <Box flex={1}>
+                  <NextLink href='/post/[id]' as={`/post/${post.id}`}>
+                    <Link>
+                      <Heading fontSize='xl'>{post.title}</Heading>
+                    </Link>
+                  </NextLink>
+                  <Text>posted by {post.creator.username}</Text>
+                  <Flex align='center'>
+                    <Text flex={1} mt={4}>
+                      {post.textSnippet}
+                    </Text>
+                    <IconButton
+                      ml='auto'
+                      icon='delete'
+                      variantColor='red'
+                      aria-label='Delete Post'
+                      onClick={() => {
+                        deletePost({ id: post.id })
+                      }}
+                    />
+                  </Flex>
+                </Box>
+              </Flex>
+            )
+          )}
         </Stack>
       )}
       {data && data.posts.hasMore ? (

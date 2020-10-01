@@ -32,7 +32,12 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   } else {
     //user is logged in
     body = (
-      <Flex>
+      <Flex align='center'>
+        <NextLink href='/create-post'>
+          <Button as={Link} mr={4}>
+            Create post
+          </Button>
+        </NextLink>
         <Box mr={4}>{data.me.username}</Box>
         <Button
           onClick={() => logout()}
@@ -46,13 +51,15 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex bg='tan' p={4} position='sticky' top={0} zIndex={1} align='center'>
-      <NextLink href='/'>
-        <Link>
-          <Heading>LiReddit</Heading>
-        </Link>
-      </NextLink>
-      <Box ml={'auto'}>{body}</Box>
+    <Flex bg='tan' p={4} position='sticky' top={0} zIndex={1}>
+      <Flex maxW={800} align='center' flex={1} m='auto'>
+        <NextLink href='/'>
+          <Link>
+            <Heading>LiReddit</Heading>
+          </Link>
+        </NextLink>
+        <Box ml={'auto'}>{body}</Box>
+      </Flex>
     </Flex>
   )
 }
